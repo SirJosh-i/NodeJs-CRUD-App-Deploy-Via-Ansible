@@ -27,7 +27,7 @@ jobs:
 
     - name: Deployment with Ansible
       run: |
-          ansible-playbook -i inventory.yml deploy-only-playbook.yml \
+          ansible-playbook -i inventory.yml deploy-playbook.yml \
             -e "server_ip=${{ secrets.SERVER_IP }}" \
             -e "server_user=${{ secrets.SERVER_USER }}" \
             -e "ssh_key_path=/home/runner/.ssh/id_ed25519"
