@@ -117,7 +117,7 @@
         
     - name: Verify deployment
       uri:
-        url: "http://{{ ansible_domain }}"
+        url: "http://app.joshisiris.com.np"
         method: GET
         status_code: 200
       delegate_to: localhost
