@@ -1,6 +1,6 @@
 # deploy-only-playbook.yml
 - name: Deploy Application Updates
-  hosts: production_server
+  hosts: myapp-server
   become: yes
   vars:
     app_directory: "/home/ubuntu/project"
