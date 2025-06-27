@@ -15,32 +15,19 @@
       delegate_to: localhost  # Ansible needs this to execute this task i.e. Copy files from local machine to remote server
 
     - name: Check if Docker is installed
-      command: docker --version
+      shell: docker --version
       register: docker_check
       ignore_errors: yes  # Prevents playbook failure if Docker is not installed
 
     - name: Copy Docker install script
       ansible.builtin.copy:
-        src: ./ansible/basic-installs.sh  # From GitHub repository
+        src: basic-installs.sh  # From GitHub repository
         dest: /tmp/basic-installs.sh  # To the remote server
         mode: '0755'  # Executable permissions
       when: docker_check.rc != 0  # Only copy if Docker is not installed
 
     - name: Execute Docker install script
       ansible.builtin.shell: /tmp/basic-installs.sh
-      become: yes
-      when: docker_check.rc != 0
-
-    - name: Install Docker packages (only if Docker wasn't installed)
-      apt:
-        name:
-          - docker-ce
-          - docker-ce-cli
-          - containerd.io
-          - docker-buildx-plugin
-          - docker-compose-plugin
-        state: present
-        update_cache: yes
       become: yes
       when: docker_check.rc != 0
 
