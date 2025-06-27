@@ -12,6 +12,8 @@
         dest: "{{ app_directory }}/"
         delete: yes
         recursive: yes
+        private_key: /home/runner/.ssh/id_ed25519
+        ssh_connection_multiplexing: false
       delegate_to: localhost  # Ansible needs this to execute this task i.e. Copy files from local machine to remote server
 
     - name: Check if Docker is installed
