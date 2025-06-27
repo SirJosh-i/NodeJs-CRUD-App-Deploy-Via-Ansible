@@ -83,7 +83,7 @@
       ignore_errors: yes  # Ignore if default site does not exist
 
     - name: View Docker containers
-      shell: docker ps --q
+      shell: docker ps
       register: running_containers  # Creates a variable with the output of the previous command
     - name: Start containers only if Docker containers are not running
       shell: docker compose up --build -d
