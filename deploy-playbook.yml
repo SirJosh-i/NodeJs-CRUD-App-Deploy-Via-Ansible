@@ -80,18 +80,13 @@
       notify: restart nginx
       ignore_errors: yes  # Ignore if default site does not exist
 
-    - name: Build and start Docker containers
-      shell: |
-        cd {{ app_directory }}
-        docker compose up --build -d
-      become_user: "{{ ansible_user }}"
-
-    - name: Check if Docker containers are running
+    - name: View Docker containers
       shell: docker ps --q
       register: running_containers  # Creates a variable with the output of the previous command
-      debug:
-        msg: "Containers are running"
-      when: running_containers.stdout!= ""  # If running_container's output is not empty
+    - name: Start containers only if Docker containers are not running
+      shell: docker compose up --build -d
+      become_user: "{{ ansible_user }}"
+      when: running_containers.stdout == ""
 
     - name: Creating Table and Inserting Data in postgres containerd.io
       vars:
