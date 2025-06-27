@@ -2,7 +2,7 @@
 all:
   hosts:
     myapp-server:
-      ansible_host: "{{ server_ip }}"  # Use variable instead of hardcoded IP
-      ansible_user: "{{ server_user}}"  # Use variable for user
-      ansible_ssh_private_key_file: "{{ ssh_key_path }}"  # Use variable for key path
+      ansible_host: 13.201.53.47  # Use variable instead of hardcoded IP
+      ansible_user: "ubuntu"  # Use variable for user
+      ansible_ssh_private_key_file: ~/.ssh/id_ed25519  # Use variable for key path
       ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
