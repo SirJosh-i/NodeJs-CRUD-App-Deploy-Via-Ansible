@@ -29,9 +29,7 @@ jobs:
 
     - name: Deployment with Ansible
       run: |
-        ansible-playbook -i inventory.yml deploy-playbook.yml \
-        --extra-vars "server_ip=${{ secrets.SERVER_IP }} server_user=${{ secrets.SERVER_USER }} ssh_key_path=/home/runner/.ssh/id_ed25519"
-
+        ansible-playbook -i inventory.yml deploy-playbook.yml
             
     - name: Cleanup SSH key
       run: rm -f ~/.ssh/id_ed25519
