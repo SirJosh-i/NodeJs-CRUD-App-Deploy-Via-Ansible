@@ -4,5 +4,4 @@ all:
     myapp-server:
       ansible_host: "{{ server_ip }}"  # Use variable instead of hardcoded IP
       ansible_user: "{{ server_user}}"  # Use variable for user
-      ansible_ssh_private_key_file: "{{ ssh_key_path }}"  # Use variable for key path
       ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
