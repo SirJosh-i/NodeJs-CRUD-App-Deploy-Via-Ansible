@@ -1,0 +1,36 @@
+
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup SSH key
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+        chmod 600 ~/.ssh/id_ed25519
+        ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+    - name: Install Ansible
+      run: |
+        sudo apt update
+        sudo apt install -y ansible
+
+    - name: Deployment with Ansible
+      run: |
+          ansible-playbook -i inventory.yml deploy-only-playbook.yml \
+            -e "server_ip=${{ secrets.SERVER_IP }}" \
+            -e "server_user=${{ secrets.SERVER_USER }}" \
+            -e "ssh_key_path=/home/runner/.ssh/id_ed25519"
+            
+    - name: Cleanup SSH key
+      run: rm -f ~/.ssh/id_ed25519
