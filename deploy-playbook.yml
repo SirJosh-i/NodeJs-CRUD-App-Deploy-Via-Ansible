@@ -8,29 +8,28 @@
   tasks:
     - name: Copy application files from local to remote
       synchronize:
-        src: "./app/" # Application directory in GitHub repository
+        src: "./app/"
         dest: "{{ app_directory }}/"
         delete: yes
         recursive: yes
         private_key: /home/runner/.ssh/id_ed25519
         ssh_connection_multiplexing: false
-      delegate_to: localhost  # Ansible needs this to execute this task i.e. Copy files from local machine to remote server
+      delegate_to: localhost
 
     - name: Check if Docker is installed
       shell: docker --version
       register: docker_check
-      ignore_errors: yes  # Prevents playbook failure if Docker is not installed
+      ignore_errors: yes
 
     - name: Copy Docker install script
-      ansible.builtin.copy:
-        src: basic-installs.sh  # From GitHub repository
-        dest: /tmp/basic-installs.sh  # To the remote server
-        mode: '0755'  # Executable permissions
-      when: docker_check.rc != 0  # Only copy if Docker is not installed
+      copy:
+        src: basic-installs.sh
+        dest: /tmp/basic-installs.sh
+        mode: '0755'
+      when: docker_check.rc != 0
 
     - name: Execute Docker install script
-      ansible.builtin.shell: /tmp/basic-installs.sh
-      become: yes
+      shell: /tmp/basic-installs.sh
       when: docker_check.rc != 0
 
     - name: Start and enable Docker
@@ -38,81 +37,136 @@
         name: docker
         state: started
         enabled: yes
-      become: yes
 
     - name: Add user to docker group
       user:
         name: "{{ ansible_user }}"
         groups: docker
         append: yes
-      become: yes
 
     - name: Install nginx
       apt:
         name: nginx
         state: present
-      become: yes
-      ignore_errors: yes # Ignore if nginx is already installed
+        update_cache: yes
+      ignore_errors: yes
 
-# In each nginx config: notify is mentioned so as, the handlers can restart nginx if any changes are made to the configuration file
-
-    - name: Copy nginx configuration
+    - name: Copy Nginx configuration
       copy:
-        src: "./app.conf"
-        dest: "/etc/nginx/sites-available/app.conf"
+        src: app.conf
+        dest: /etc/nginx/sites-available/app.conf
         backup: yes
-      become: yes
-      notify: restart nginx
-      ignore_errors: yes # Ignore if configuration file already exists
+      notify: reload nginx
 
-    - name: Enable nginx site
+    - name: Enable Nginx site
       file:
-        src: "/etc/nginx/sites-available/app.conf"
-        dest: "/etc/nginx/sites-enabled/app.conf"
+        src: /etc/nginx/sites-available/app.conf
+        dest: /etc/nginx/sites-enabled/app.conf
         state: link
-      become: yes
-      notify: restart nginx
-      ignore_errors: yes # Ignore if symlink already exists
+      notify: reload nginx
 
-    - name: Remove default nginx site
+    - name: Remove default Nginx site
       file:
-        path: "/etc/nginx/sites-enabled/default"
+        path: /etc/nginx/sites-enabled/default
         state: absent
-      become: yes
-      notify: restart nginx
-      ignore_errors: yes  # Ignore if default site does not exist
+      notify: reload nginx
 
-    - name: View Docker containers
-      shell: docker ps
-      register: running_containers  # Creates a variable with the output of the previous command
+    - name: Test Nginx configuration
+      shell: nginx -t
+      register: nginx_test
+      failed_when: nginx_test.rc != 0
 
-    - name: Start containers only if Docker containers are not running
+    - name: Show Nginx test result
+      debug:
+        var: nginx_test.stdout_lines
+
+    - name: Check if app containers are running
+      shell: docker ps --filter "name=db" --filter "name=app" --format "{{.Names}}"
+      register: app_containers
+      ignore_errors: yes # This will not fail the playbook if no containers are found
+
+    - name: Stop existing containers if running
+      shell: docker compose down
+      args:
+        chdir: "{{ app_directory }}/app"
+      ignore_errors: yes
+      when: app_containers.stdout != ""
+
+    - name: Start Docker containers
       shell: docker compose up --build -d
       args:
-        chdir: "{{ app_directory }}/app"  # Change directory to the application directory
-      become_user: "{{ ansible_user }}"
-      when: running_containers.stdout == ""
+        chdir: "{{ app_directory }}/app"
+      register: docker_start_result
 
-    - name: Creating Table and Inserting Data in postgres containerd.io
-      vars:
-        db_container: "db"
-        user: "appu"
-        myapp: "myapp"
+    - name: Show Docker start result
+      debug:
+        var: docker_start_result.stdout_lines
+
+    - name: Wait for containers to be ready
+      shell: docker compose ps
+      args:
+        chdir: "{{ app_directory }}/app"
+      register: container_status
+      until: "'Up' in container_status.stdout"
+      retries: 13
+      delay: 20
+
+    - name: Wait for database port
+      wait_for:
+        host: localhost
+        port: 5432
+        delay: 5
+        timeout: 60
+      ignore_errors: yes
+
+    - name: Verify containers are running
+      shell: docker ps --format "table {{.Names}}\t{{.Status}}"
+      register: final_containers
+
+    - name: Show running containers
+      debug:
+        var: final_containers.stdout_lines
+
+    - name: Create database table
       shell: |
-        docker exec -i {{db_container}} psql -U {{user}} -d {{myapp}} -c "CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name VARCHAR(100));"
-      ignore_errors: yes  # Ignore if table already exists
-        
+        docker exec -i db psql -U appu -d myapp -c "CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name VARCHAR(100));"
+      register: db_result
+      until: db_result.rc == 0
+      retries: 5
+      delay: 10
+      ignore_errors: yes
+
+    - name: Show database result
+      debug:
+        var: db_result
+      when: db_result is defined
+
+    - name: Wait before verification
+      pause:
+        seconds: 15
+
     - name: Verify deployment
       uri:
         url: "http://app.joshisiris.com.np"
         method: GET
         status_code: 200
+        timeout: 30
       delegate_to: localhost
+      register: deployment_check
+      retries: 3
+      delay: 10
 
-# If any update is made to the nginx configuration, restart nginx
+    - name: Show deployment verification result
+      debug:
+        var: deployment_check.status
+
   handlers:
+    - name: reload nginx
+      systemd:
+        name: nginx
+        state: reloaded
+
     - name: restart nginx
       systemd:
         name: nginx
         state: restarted
-      become: yes
