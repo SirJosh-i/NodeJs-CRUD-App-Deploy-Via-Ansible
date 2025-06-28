@@ -20,17 +20,15 @@ jobs:
         chmod 600 ~/.ssh/id_ed25519
         ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
         ssh -i /home/runner/.ssh/id_ed25519 -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "echo 'Hello From Lightsail'"
-        scp -i /home/runner/.ssh/id_ed25519 -o StrictHostKeyChecking=no -r .env ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.SERVER_DIR }}
 
+    - name: Install Ansible
+      run: |
+        sudo apt update
+        sudo apt install -y ansible
 
-    # - name: Install Ansible
-    #   run: |
-    #     sudo apt update
-    #     sudo apt install -y ansible
-
-    # - name: Deployment with Ansible
-    #   run: |
-    #     ansible-playbook -i inventory.yml deploy-playbook.yml -vvv
+    - name: Deployment with Ansible
+      run: |
+        ansible-playbook -i inventory.yml deploy-playbook.yml -vvv
             
     - name: Cleanup SSH key
       run: rm -f ~/.ssh/id_ed25519
