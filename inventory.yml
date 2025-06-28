@@ -5,4 +5,3 @@ all:
       ansible_host: 3.110.182.216  # Use variable instead of hardcoded IP
       ansible_user: "ubuntu"  # Use variable for user
       ansible_ssh_private_key_file: ~/.ssh/id_ed25519  # Use variable for key path
-      ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
