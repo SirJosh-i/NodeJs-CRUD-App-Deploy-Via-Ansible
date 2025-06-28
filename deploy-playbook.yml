@@ -88,14 +88,14 @@
     - name: Stop existing containers if running
       shell: docker compose down
       args:
-        chdir: "{{ app_directory }}/app"
+        chdir: "{{ app_directory }}"
       ignore_errors: yes
       when: app_containers.stdout != ""
 
     - name: Start Docker containers
       shell: docker compose up --build -d
       args:
-        chdir: "{{ app_directory }}/app"
+        chdir: "{{ app_directory }}"
       register: docker_start_result
 
     - name: Show Docker start result
@@ -105,7 +105,7 @@
     - name: Wait for containers to be ready
       shell: docker compose ps
       args:
-        chdir: "{{ app_directory }}/app"
+        chdir: "{{ app_directory }}"
       register: container_status
       until: "'Up' in container_status.stdout"
       retries: 13
