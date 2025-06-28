@@ -77,6 +77,9 @@
       register: nginx_test
       failed_when: nginx_test.rc != 0
 
+    - name: Upate Nginx configuration
+      shell: nginx -s reload
+
     - name: Show Nginx test result
       debug:
         var: nginx_test.stdout_lines
