@@ -81,7 +81,7 @@
         var: nginx_test.stdout_lines
 
     - name: Check if app containers are running
-      shell: docker ps --filter "name=db" --filter "name=app" --format "{{.Names}}"
+      shell: docker ps --filter "name=db" --filter "name=app"
       register: app_containers
       ignore_errors: yes # This will not fail the playbook if no containers are found
 
@@ -120,7 +120,7 @@
       ignore_errors: yes
 
     - name: Verify containers are running
-      shell: docker ps --format "table {{.Names}}\t{{.Status}}"
+      shell: docker ps
       register: final_containers
 
     - name: Show running containers
