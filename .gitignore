@@ -1,0 +1,5 @@
+node_modules/
+.env
+
+# GitHub Actions artifacts
+.github/workflows/*.bak
