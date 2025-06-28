@@ -3,7 +3,7 @@
   hosts: myapp-server
   become: yes
   vars:
-    app_directory: "/home/ubuntu/project"
+    app_directory: "/home/{{ ansible_user }}/project"
     
   tasks:
     - name: Copy application files from local to remote
@@ -15,6 +15,14 @@
         private_key: /home/runner/.ssh/id_ed25519
         ssh_connection_multiplexing: false
       delegate_to: localhost
+
+    - name: Copy .env.example to config directory
+      copy:
+        src: "{{ app_directory }}/app/.env.example"
+        dest: /home/{{ ansible_user }}/config/.env
+        remote_src: yes 
+        mode: '0600'
+        backup: yes
 
     - name: Check if Docker is installed
       shell: docker --version
