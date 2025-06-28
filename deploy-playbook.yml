@@ -18,7 +18,7 @@
 
     - name: Copy .env.example to config directory
       copy:
-        src: "{{ app_directory }}/app/.env.example"
+        src: "{{ app_directory }}/.env.example"
         dest: /home/{{ ansible_user }}/config/.env
         remote_src: yes 
         mode: '0600'
