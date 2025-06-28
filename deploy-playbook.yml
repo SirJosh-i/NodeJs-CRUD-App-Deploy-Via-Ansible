@@ -21,7 +21,6 @@
         src: "{{ app_directory }}/.env.example"
         dest: /home/{{ ansible_user }}/config/.env
         remote_src: yes 
-        mode: '0600'
         backup: yes
 
     - name: Check if Docker is installed
