@@ -10,3 +10,5 @@ CRUD API was crafted using NodeJs and all necessary files are held inside [app](
 - Docker compose
 
 ### Folder Structure
+(https://github.com/SirJosh-i/NodeJs-CRUD-App-Deploy-Via-Ansible/blob/master/images/tree.png)
+
