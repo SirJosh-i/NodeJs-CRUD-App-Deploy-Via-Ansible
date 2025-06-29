@@ -6,6 +6,26 @@
     app_directory: "/home/{{ ansible_user }}/project"
     
   tasks:
+    # Fix filesystem permissions at start
+    - name: Ensure filesystem is writable
+      shell: |
+        mount -o remount,rw /
+        chown -R {{ ansible_user }}:{{ ansible_user }} /home/{{ ansible_user }}
+      ignore_errors: yes
+
+    # Create directories with proper ownership first
+    - name: Create required directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
+      loop:
+        - "{{ app_directory }}"
+        - "/home/{{ ansible_user }}/config"
+        - "/home/{{ ansible_user }}/backup"
+        
     - name: Copy application files from local to remote
       synchronize:
         src: "./app/"
@@ -86,6 +106,7 @@
     - name: Check if app containers are running
       shell: docker ps --filter "name=db" --filter "name=app"
       register: app_containers
+      become_user: "{{ ansible_user }}"
       ignore_errors: yes # This will not fail the playbook if no containers are found
 
     - name: Stop existing containers if running
