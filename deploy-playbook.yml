@@ -50,10 +50,9 @@
 
     - name: Copy Docker install script
       copy:
-        src: basic-installs.sh
-        dest: /tmp/basic-installs.sh
+        src: basic_install.sh
+        dest: /tmp/basic_install.sh
         mode: '0755'
-      delegate_to: localhost
       when: docker_check.rc != 0
 
     - name: Execute Docker install script
