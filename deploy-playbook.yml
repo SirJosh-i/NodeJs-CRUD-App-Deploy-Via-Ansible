@@ -123,15 +123,15 @@
         chdir: "{{ app_directory }}"
       register: container_status
       until: "'Up' in container_status.stdout"
-      retries: 5
-      delay: 10
+      retries: 13
+      delay: 20
 
     - name: Wait for database port
       wait_for:
         host: localhost
         port: 5432
-        delay: 5
-        timeout: 20
+        delay: 10
+        timeout: 30
       ignore_errors: yes
 
     - name: Verify containers are running
@@ -158,7 +158,7 @@
 
     - name: Wait before verification
       pause:
-        seconds: 15
+        seconds: 30
 
     - name: Verify deployment
       uri:
