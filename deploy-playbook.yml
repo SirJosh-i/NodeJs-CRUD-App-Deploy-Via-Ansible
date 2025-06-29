@@ -56,7 +56,7 @@
       when: docker_check.rc != 0
 
     - name: Execute Docker install script
-      shell: /tmp/basic-installs.sh
+      shell: /tmp/basic_install.sh
       when: docker_check.rc != 0
 
     - name: Start and enable Docker
