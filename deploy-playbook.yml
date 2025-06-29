@@ -12,19 +12,10 @@
         mount -o remount,rw /
         chown -R {{ ansible_user }}:{{ ansible_user }} /home/{{ ansible_user }}
       ignore_errors: yes
-
-    # Create directories with proper ownership first
-    - name: Create required directories
-      file:
-        path: "{{ item }}"
-        state: directory
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
-        mode: '0755'
-      loop:
-        - "{{ app_directory }}"
-        - "/home/{{ ansible_user }}/config"
-        - "/home/{{ ansible_user }}/backup"
+      
+    - name: Check if systemd-resolved is enabled or has started
+      shell: sudo systemctl start systemd-resolved
+      ignore_errors: yes
         
     - name: Copy application files from local to remote
       synchronize:
