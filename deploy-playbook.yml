@@ -132,7 +132,7 @@
 
     - name: Create database table
       shell: |
-        docker exec -i db psql -U appu -d myapp -c "CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name VARCHAR(100));"
+        docker exec -i db psql -U appu -d myapp -c "CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name VARCHAR(100), email VARCHAR(255) UNIQUE);"
       register: db_result
       until: db_result.rc == 0
       retries: 5
