@@ -5,10 +5,10 @@ set -e  # Exit on any error
 echo "Installing Docker from official repository..."
 
 # Update package index
-sudo apt get update
+sudo apt update
 
 # Install prerequisites
-sudo apt get install -y ca-certificates curl
+sudo apt install -y ca-certificates curl
 
 # Create keyrings directory
 sudo install -m 0755 -d /etc/apt/keyrings
@@ -24,10 +24,10 @@ echo \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
 # Update package index
-sudo apt get update
+sudo apt update
 
 # Install Docker packages
-sudo apt get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 echo "Docker installation completed successfully!"
 echo "Docker version: $(docker --version)"
