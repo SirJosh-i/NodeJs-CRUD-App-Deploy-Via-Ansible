@@ -5,3 +5,5 @@ README.md
 
 # GitHub Actions artifacts
 .github/workflows/*.bak
+.gitignore
+*.md
