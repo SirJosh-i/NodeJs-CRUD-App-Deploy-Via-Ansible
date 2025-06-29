@@ -28,7 +28,7 @@ jobs:
 
     - name: Deployment with Ansible
       run: |
-        ansible-playbook -i inventory.yml deploy-playbook.yml -e "PGUSER=${{ secrets.PGUSER }}"
+        ansible-playbook -i inventory.yml deploy-playbook.yml -e "PGUSER=${{ secrets.PGUSER }}" "SERVER_IP=${{ secrets.SERVER_IP }}"
             
     - name: Cleanup SSH key
       run: rm -f ~/.ssh/id_ed25519
