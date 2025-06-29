@@ -21,6 +21,7 @@
 **- Rename ip in dash cloudflare after each instance restart** 
 **- With permission issues; docker socket error: "docker.socket: Failed with result 'service-start-limit-hit". This results in "systemctl status systemd-resolved" = Failed**
 	**- I decided to reboot - Didn't work. For now - reinstalling docker. Or, removing it and letting Ansible handle installation.**
+ 	**- Couldn't remove: mount was ro; read only. Had to change using = sudo mount -o remount,rw /**
 
 
 ### SECRETS MANAGEMENT
