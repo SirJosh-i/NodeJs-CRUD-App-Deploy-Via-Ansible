@@ -25,21 +25,6 @@ services:
       - "5432"
     networks:
       - app-network
-
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
-    ports:
-      - "3001:3000"
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-      - GF_SERVER_ROOT_URL=http://app.joshisiris.com.np/grafana/
-      - GF_SERVER_SERVE_FROM_SUB_PATH=true
-    depends_on:
-      - db
-      - app
-    networks:
-      - app-network
   
 volumes:
   db_data:
