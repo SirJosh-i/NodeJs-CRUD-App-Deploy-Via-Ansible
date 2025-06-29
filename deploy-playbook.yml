@@ -53,6 +53,7 @@
         src: basic-installs.sh
         dest: /tmp/basic-installs.sh
         mode: '0755'
+      delegate_to: localhost
       when: docker_check.rc != 0
 
     - name: Execute Docker install script
