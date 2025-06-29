@@ -76,9 +76,8 @@
       shell: nginx -t
       register: nginx_test
       failed_when: nginx_test.rc != 0
+      notify: reload nginx # Reload Nginx if the test passes
 
-    - name: Upate Nginx configuration
-      shell: nginx -s reload
 
     - name: Show Nginx test result
       debug:
