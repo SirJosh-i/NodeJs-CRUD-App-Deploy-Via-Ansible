@@ -111,15 +111,15 @@
         chdir: "{{ app_directory }}"
       register: container_status
       until: "'Up' in container_status.stdout"
-      retries: 13
-      delay: 20
+      retries: 5
+      delay: 10
 
     - name: Wait for database port
       wait_for:
         host: localhost
         port: 5432
         delay: 5
-        timeout: 60
+        timeout: 20
       ignore_errors: yes
 
     - name: Verify containers are running
@@ -132,7 +132,7 @@
 
     - name: Create database table
       shell: |
-        docker exec -i db psql -U appu -d myapp -c "CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name VARCHAR(100), email VARCHAR(255) UNIQUE);"
+        docker exec -i db psql -U {{pg_username}} -d myapp -c "CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name VARCHAR(100), email VARCHAR(255) UNIQUE);"
       register: db_result
       until: db_result.rc == 0
       retries: 5

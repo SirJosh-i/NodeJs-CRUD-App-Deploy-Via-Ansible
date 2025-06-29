@@ -20,3 +20,14 @@
 
 	**- Rename ip in dash cloudflare after each instance restart**
 
+
+### SECRETS MANAGEMENT
+
+We can hide our use of variables completely by:
+- Under inventory.yml:
+	- key:"{{value}}"
+- Under deploy-playbook.yml
+	- Include key.
+- Under .github/workflows/aws.yml
+	- Where we start ansible i.e. ansible-playbook inventory.yml deploy-playbook.yml -e "PGUSER=${{ secrets.PGUSER }}"
+	- This way, our code becomes secure and neat.
