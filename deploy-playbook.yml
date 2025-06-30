@@ -63,31 +63,28 @@
         update_cache: yes
       ignore_errors: yes
 
+    - name: Remove default Nginx site
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+
     - name: Copy Nginx configuration
       copy:
-        src: app.conf
+        src: ./app.conf
         dest: /etc/nginx/sites-available/app.conf
         backup: yes
-      notify: reload nginx
 
     - name: Enable Nginx site
       file:
         src: /etc/nginx/sites-available/app.conf
         dest: /etc/nginx/sites-enabled/app.conf
         state: link
-      notify: reload nginx
-
-    - name: Remove default Nginx site
-      file:
-        path: /etc/nginx/sites-enabled/default
-        state: absent
-      notify: reload nginx
 
     - name: Test Nginx configuration
       shell: nginx -t
       register: nginx_test
-      failed_when: nginx_test.rc != 0
-      notify: reload nginx # Reload Nginx if the test passes
+      failed_when: nginx_test.rc != 0 # Fail when the return code is not 0 - Any other than zero indicates an error
+      notify: restart nginx
 
 
     - name: Show Nginx test result
@@ -131,7 +128,7 @@
         host: localhost
         port: 5432
         delay: 30
-        timeout: 300
+        timeout: 10
       # ignore_errors: yes
 
     - name: Verify containers are running
@@ -176,12 +173,5 @@
         var: deployment_check.status
 
   handlers:
-    - name: reload nginx
-      systemd:
-        name: nginx
-        state: reloaded
-
     - name: restart nginx
-      systemd:
-        name: nginx
-        state: restarted
+      command: systemctl restart nginx

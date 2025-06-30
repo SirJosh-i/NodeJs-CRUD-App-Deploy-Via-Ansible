@@ -34,3 +34,10 @@ We can hide our use of variables completely by:
 - Under .github/workflows/aws.yml
 	- Where we start ansible i.e. ansible-playbook inventory.yml deploy-playbook.yml -e "PGUSER=${{ secrets.PGUSER }}"
 	- This way, our code becomes secure and neat.
+
+### If you ever encounter: Error[111]:
+- "msg": "Status code was -1 and not [200]: Request failed: <urlopen error [Errno 111] Connection refused>",
+	- TRY RESTARTING NGINX!
+
+	#### Fixed!
+	- Handlers was tweaked by adding commands: systemctl restart nginx
