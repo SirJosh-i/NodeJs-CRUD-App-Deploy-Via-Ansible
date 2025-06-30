@@ -131,7 +131,7 @@
         host: localhost
         port: 5432
         delay: 30
-        timeout: 50
+        timeout: 300
       # ignore_errors: yes
 
     - name: Verify containers are running
