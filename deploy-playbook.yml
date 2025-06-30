@@ -123,16 +123,16 @@
         chdir: "{{ app_directory }}"
       register: container_status
       until: "'Up' in container_status.stdout"
-      retries: 13
-      delay: 20
+      retries: 5
+      delay: 30 
 
     - name: Wait for database port
       wait_for:
         host: localhost
         port: 5432
-        delay: 10
-        timeout: 30
-      ignore_errors: yes
+        delay: 30
+        timeout: 50
+      # ignore_errors: yes
 
     - name: Verify containers are running
       shell: docker ps
@@ -158,7 +158,7 @@
 
     - name: Wait before verification
       pause:
-        seconds: 30
+        seconds: 50
 
     - name: Verify deployment
       uri:
@@ -168,8 +168,8 @@
         timeout: 30
       delegate_to: localhost
       register: deployment_check
-      retries: 3
-      delay: 10
+      retries: 5
+      delay: 30
 
     - name: Show deployment verification result
       debug:
