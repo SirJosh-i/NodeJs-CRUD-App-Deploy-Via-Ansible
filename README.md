@@ -41,3 +41,6 @@ GitHub Actions was used to deploy to the lightsail instance and Ansible was setu
 
 ### Logging and Monitoring:
 🚧 Currently In Progress
+
+### Problems and possible solutions!
+[Click here](https://github.com/SirJosh-i/NodeJs-CRUD-App-Deploy-Via-Ansible/blob/master/Problems.md)
