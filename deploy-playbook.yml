@@ -12,6 +12,9 @@
         mount -o remount,rw /
         chown -R {{ ansible_user }}:{{ ansible_user }} /home/{{ ansible_user }}
       ignore_errors: yes
+
+    - name: Hello
+      command: echo "Hello from the other side!"
       
     - name: Check if systemd-resolved is enabled or has started
       shell: sudo systemctl start systemd-resolved
