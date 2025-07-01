@@ -10,6 +10,8 @@ The problem began when my SSH path wasn't being used leading to "Public Key mism
 #### Why it happened?!
 Because ssh-multiplexing (if turned on); Synchronize (that uses rsync) would spawn its own SSH process separately to that of Ansible. So, every time it was generating its own SSH and causing to failure.
 
+### General Problems:
+- Rename ip in dash cloudflare after each instance restart
 
 ### Environment file
 
@@ -25,18 +27,22 @@ Because ssh-multiplexing (if turned on); Synchronize (that uses rsync) would spa
 
 - container name for both app and db
 
-- app dependencies. 
+#### App dependencies. 
 
-- npm i (doesn't install all packages - we must specify each)
+<pre> ```bash npm i (doesn't install all packages - we must specify each)
+   npm i express dotenv pg ``` </pre>
 
-- npm i express dotenv pg
+### Major problem!
 
-- **Major problem!**
+- docker socket error: "docker.socket: Failed with result 'service-start-limit-hit". This results in "systemctl status systemd-resolved" = Failed
+ - TO resolve: ```systemctl restart systemd-resolved.```
 
-**- Rename ip in dash cloudflare after each instance restart** 
-**- With permission issues; docker socket error: "docker.socket: Failed with result 'service-start-limit-hit". This results in "systemctl status systemd-resolved" = Failed**
-	**- I decided to reboot - Didn't work. For now - reinstalling docker. Or, removing it and letting Ansible handle installation.**
- 	**- Couldn't remove: mount was ro; read only. Had to change using = sudo mount -o remount,rw /**
+#### Docker socket error - Handled:
+- Reinstalling docker. Or, removing it and letting Ansible handle installation.
+
+#### Unable to write in the directory:
+- Couldn't remove: mount was ro; read only. Had to change using:
+	``` sudo mount -o remount,rw /```
 
 
 ### SECRETS MANAGEMENT
