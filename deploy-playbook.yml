@@ -1,4 +1,4 @@
-# deploy-only-playbook.yml
+# deploy-playbook.yml
 - name: Deploy Application Updates
   hosts: myapp-server
   vars:
