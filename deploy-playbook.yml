@@ -125,8 +125,11 @@
       shell: nginx -t
       become: yes
       register: nginx_test
-      notify: restart nginx
       failed_when: nginx_test.rc != 0 # Fail when the return code is not 0 - Any other than zero indicates an error
+
+    - name: Restart Nginx
+      command: systemctl restart nginx
+      become: yes
       
     - name: Show Nginx test result
       debug:
@@ -219,8 +222,3 @@
     - name: Show deployment verification result
       debug:
         var: deployment_check.status
-
-  handlers:
-    - name: restart nginx
-      command: systemctl restart nginx
-      become: yes
