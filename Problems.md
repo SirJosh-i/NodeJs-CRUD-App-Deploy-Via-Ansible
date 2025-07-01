@@ -12,6 +12,9 @@ Because ssh-multiplexing (if turned on); Synchronize (that uses rsync) would spa
 
 ### General Problems:
 - Rename ip in dash cloudflare after each instance restart
+- In the playbook: times: 0
+  This is a unique module that will help preserve timestamps (times: yes).
+- This requires the destination user to have write permission on the files after copying them
 
 ### Environment file
 
