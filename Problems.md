@@ -1,22 +1,37 @@
-\- .env file overwrite or removed (no file on github)
+### Synchronize or rsync:
+Encountered an error where ssh connection wouldn't establish.
+Reason: ssh-multiplexing
+- SSH-Multiplexing allowed tasks to reuse single persistent connection.
+- This is used by default; Its fast because SSH doesn't need to re-authenticate and renegotiate every time.
+  
+#### Problem!
+The problem began when my SSH path wasn't being used leading to "Public Key mismatch"
 
-&nbsp;	- .env.example in GitHub 
+#### Why it happened?!
+Because ssh-multiplexing (if turned on); Synchronize (that uses rsync) would spawn its own SSH process separately to that of Ansible. So, every time it was generating its own SSH and causing to failure.
 
-&nbsp;	- copied it to another folder outside app directory of remote server.
 
-\- docker-compose.yml changes
+### Environment file
 
-&nbsp;	- .env from outside app directory: under config
+- .env file overwrite or removed (no file on github)
 
-&nbsp;	- container name for both app and db
+	- .env.example in GitHub 
 
-\- app dependencies. 
+	- copied it to another folder outside app directory of remote server.
 
-&nbsp;	- npm i (doesn't install all packages - we must specify each)
+	- docker-compose.yml changes
 
-&nbsp;	- npm i express dotenv pg
+	- .env from outside app directory: under config
 
-\- **Major problem!**
+- container name for both app and db
+
+- app dependencies. 
+
+- npm i (doesn't install all packages - we must specify each)
+
+- npm i express dotenv pg
+
+- **Major problem!**
 
 **- Rename ip in dash cloudflare after each instance restart** 
 **- With permission issues; docker socket error: "docker.socket: Failed with result 'service-start-limit-hit". This results in "systemctl status systemd-resolved" = Failed**
