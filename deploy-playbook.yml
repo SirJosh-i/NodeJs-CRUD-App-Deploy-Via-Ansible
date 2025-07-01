@@ -36,6 +36,10 @@
         recursive: yes
         private_key: /home/runner/.ssh/id_ed25519
         ssh_connection_multiplexing: false
+        owner: no    # Don't preserve source ownership
+        group: no    # Don't preserve source group
+        perms: no    # Don't preserve source permissions
+        times: no    # Don't try to preserve timestamps (this was causing one of your errors)
       delegate_to: localhost
       
     # Fix ownership after sync
