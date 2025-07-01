@@ -32,10 +32,28 @@ Because ssh-multiplexing (if turned on); Synchronize (that uses rsync) would spa
 <pre> ```bash npm i (doesn't install all packages - we must specify each)
    npm i express dotenv pg ``` </pre>
 
-### Major problem!
+### Docker Problems:
 
-- docker socket error: "docker.socket: Failed with result 'service-start-limit-hit". This results in "systemctl status systemd-resolved" = Failed
+```docker socket error: "docker.socket: Failed with result 'service-start-limit-hit".```
+
+#### Cannot ping or failed network name resolution:
+
+- docker socket error probably resulted in:
+  "systemctl status systemd-resolved" = Failed
  - TO resolve: ```systemctl restart systemd-resolved.```
+
+#### Docker socket error - Steps taken:
+
+ ##### Dockerd
+ ```sudo dockerd```
+ Dockerd is a daemon for docker containers. Since, this is not running in   background - we were unable to take any actions related to the service     provided by it.
+**Did it work?**
+*NOPE!*
+
+ ##### Restarting or starting docker service:
+ ```systemctl start docker```
+**Did it work?**
+*NOPE!*
 
 #### Docker socket error - Handled:
 - Reinstalling docker. Or, removing it and letting Ansible handle installation.
