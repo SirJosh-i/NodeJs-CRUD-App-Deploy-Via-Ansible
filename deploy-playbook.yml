@@ -1,41 +1,71 @@
 # deploy-only-playbook.yml
 - name: Deploy Application Updates
   hosts: myapp-server
-  become: yes
   vars:
-    app_directory: "/home/{{ ansible_user }}/project"
+    app_directory: "/home/{{ ansible_user }}"
     
   tasks:
     # Fix filesystem permissions at start
     - name: Ensure filesystem is writable
-      shell: |
-        mount -o remount,rw /
-        chown -R {{ ansible_user }}:{{ ansible_user }} /home/{{ ansible_user }}
+      command: mount -o remount,rw /
+      become: yes
       ignore_errors: yes
 
     - name: Hello
       command: echo "Hello from the other side!"
       
     - name: Check if systemd-resolved is enabled or has started
-      shell: sudo systemctl start systemd-resolved
+      command: sudo systemctl start systemd-resolved
       ignore_errors: yes
+      become: yes
+      
+    - name: Ensure project folder exists
+      file: 
+        path: "{{ app_directory }}/project"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
+      become: yes
         
     - name: Copy application files from local to remote
       synchronize:
         src: "./app/"
-        dest: "{{ app_directory }}/"
+        dest: "{{ app_directory }}/project/"
         delete: yes
         recursive: yes
         private_key: /home/runner/.ssh/id_ed25519
         ssh_connection_multiplexing: false
       delegate_to: localhost
+      
+    # Fix ownership after sync
+    - name: Fix ownership of synced files
+      file:
+        path: "{{ app_directory }}/project"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        recurse: yes
+      become: yes
 
+    - name: Ensure config folder exists
+      file: 
+        path: "{{ app_directory }}/config"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
+      become: yes
+    
     - name: Copy .env.example to config directory
       copy:
-        src: "{{ app_directory }}/.env.example"
-        dest: /home/{{ ansible_user }}/config/.env
-        remote_src: yes 
-        backup: yes
+        src: "{{ app_directory }}/project/.env.example"
+        dest: "{{ app_directory }}/config/.env"
+        remote_src: yes # The source path is on the remote host
+        backup: yes # Backup file is created on the remote host - with timestamp
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0644'
+      become: yes
 
     - name: Check if Docker is installed
       shell: docker --version
@@ -47,10 +77,12 @@
         src: basic_install.sh
         dest: /tmp/basic_install.sh
         mode: '0755'
+      become: yes
       when: docker_check.rc != 0
 
     - name: Execute Docker install script
       shell: /tmp/basic_install.sh
+      become: yes
       when: docker_check.rc != 0
 
     - name: Start and enable Docker
@@ -58,38 +90,43 @@
         name: docker
         state: started
         enabled: yes
+      become: yes
 
     - name: Install nginx
       apt:
         name: nginx
         state: present
         update_cache: yes
+      become: yes
       ignore_errors: yes
 
     - name: Remove default Nginx site
       file:
         path: /etc/nginx/sites-enabled/default
         state: absent
+      become: yes
 
     - name: Copy Nginx configuration
       copy:
         src: ./app.conf
         dest: /etc/nginx/sites-available/app.conf
         backup: yes
+      become: yes
 
     - name: Enable Nginx site
       file:
         src: /etc/nginx/sites-available/app.conf
         dest: /etc/nginx/sites-enabled/app.conf
         state: link
+      become: yes
 
     - name: Test Nginx configuration
       shell: nginx -t
+      become: yes
       register: nginx_test
-      failed_when: nginx_test.rc != 0 # Fail when the return code is not 0 - Any other than zero indicates an error
       notify: restart nginx
-
-
+      failed_when: nginx_test.rc != 0 # Fail when the return code is not 0 - Any other than zero indicates an error
+      
     - name: Show Nginx test result
       debug:
         var: nginx_test.stdout_lines
@@ -97,30 +134,37 @@
     - name: Check if app containers are running
       shell: docker ps --filter "name=db" --filter "name=app"
       register: app_containers
-      become_user: "{{ ansible_user }}"
       ignore_errors: yes # This will not fail the playbook if no containers are found
 
     - name: Stop existing containers if running
       shell: docker compose down
       args:
-        chdir: "{{ app_directory }}"
+        chdir: "{{ app_directory }}/project"
       ignore_errors: yes
       when: app_containers.stdout != ""
 
     - name: Start Docker containers
       shell: docker compose up --build -d
       args:
-        chdir: "{{ app_directory }}"
+        chdir: "{{ app_directory }}/project"
       register: docker_start_result
+      
+    - name: Fix ownership after Docker compose
+      file:
+        path: "{{ app_directory }}/project"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        recurse: yes
+      become: yes
 
     - name: Show Docker start result
       debug:
         var: docker_start_result.stdout_lines
 
     - name: Wait for containers to be ready
-      shell: docker compose ps
+      shell: docker compose ps # List containers of the compose project
       args:
-        chdir: "{{ app_directory }}"
+        chdir: "{{ app_directory }}/project"
       register: container_status
       until: "'Up' in container_status.stdout"
       retries: 5
@@ -178,3 +222,4 @@
   handlers:
     - name: restart nginx
       command: systemctl restart nginx
+      become: yes
