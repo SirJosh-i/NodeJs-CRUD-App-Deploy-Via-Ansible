@@ -29,8 +29,8 @@ Because ssh-multiplexing (if turned on); Synchronize (that uses rsync) would spa
 
 #### App dependencies. 
 
-<pre> ``` npm i (doesn't install all packages - we must specify each)
-   npm i express dotenv pg ``` </pre>
+<pre> npm i (doesn't install all packages - we must specify each)
+   npm i express dotenv pg </pre>
 
 ### Docker Problems:
 
@@ -62,14 +62,14 @@ Because ssh-multiplexing (if turned on); Synchronize (that uses rsync) would spa
 - Couldn't remove: mount was ro; read only. Had to change using:
 	``` sudo mount -o remount,rw /```
 #### Permission issues in Docker:
-<pre> ```
+<pre> 
 services:
   app:
     build: .
     user: "${UID:-1000}:${GID:-1000}"  # Use host user/group
     volumes:
       - .:/app 
-```</pre>
+</pre>
 ### SECRETS MANAGEMENT
 
 We can hide our use of variables completely by:
