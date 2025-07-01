@@ -1,3 +1,6 @@
+### Known Problem:
+- Nginx is not restarting. This causes an error when the task: **"Verify deployment"** runs
+
 ### Synchronize or rsync:
 Encountered an error where ssh connection wouldn't establish.
 Reason: ssh-multiplexing
