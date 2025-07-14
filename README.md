@@ -1,5 +1,5 @@
 # Automation with Ansible
-(https://github.com/SirJosh-i/NodeJs-CRUD-App-Deploy-Via-Ansible/blob/master/images/AnsibleFlow.png)
+[!Ansible Flow](https://github.com/SirJosh-i/NodeJs-CRUD-App-Deploy-Via-Ansible/blob/master/images/AnsibleFlow.png)
 ## Development of the App:
 ### Overview:
 CRUD API was crafted using NodeJs and Postgres. All necessary files are held inside [app](https://github.com/SirJosh-i/NodeJs-CRUD-App-Deploy-Via-Ansible/tree/master/app).
