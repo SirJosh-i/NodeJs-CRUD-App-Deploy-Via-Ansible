@@ -9,9 +9,6 @@ CRUD API was crafted using NodeJs and Postgres. All necessary files are held ins
 - Docker
 - Docker compose
 
-### Folder Structure
-![tree directory](https://github.com/SirJosh-i/NodeJs-CRUD-App-Deploy-Via-Ansible/blob/master/images/tree.png)
-
 ### What I did - Simplified in points:
 - Created an app.js highlighting a basic CRUD API and wrote db.js to handle connection between my app and the database.
 - I wrote a simple [Dockerfile](https://github.com/SirJosh-i/NodeJs-CRUD-App-Deploy-Via-Ansible/blob/master/app/Dockerfile) and [docker-compose.yml](https://github.com/SirJosh-i/NodeJs-CRUD-App-Deploy-Via-Ansible/blob/master/app/docker-compose.yml).
