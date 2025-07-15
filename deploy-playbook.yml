@@ -4,14 +4,17 @@
   become: yes
   vars:
     app_directory: "/home/{{ ansible_user }}"
-    
+  
   tasks:
+<<<<<<< Updated upstream
     # Fix filesystem permissions at start
     - name: Ensure filesystem is writable
       command: mount -o remount,rw /
 
       ignore_errors: yes
 
+=======
+>>>>>>> Stashed changes
     - name: Hello
       command: echo "Hello from the other side!"
       
