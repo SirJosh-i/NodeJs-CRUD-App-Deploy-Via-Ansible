@@ -1,3 +1,8 @@
+### Current Issue
+- Permission issues when running docker related tasks without root access.
+  -  Check and try to reconfigure permissions during installation of docker.
+  -  Handle post-installation as a separate task.
+
 ### Known Problem:
 - Nginx is not restarting. This causes an error when the task: **"Verify deployment"** runs
 
