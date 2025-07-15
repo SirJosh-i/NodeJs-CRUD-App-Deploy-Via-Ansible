@@ -146,12 +146,14 @@
         chdir: "{{ app_directory }}/project"
       ignore_errors: yes
       when: app_containers.stdout != ""
+      become: yes
 
     - name: Start Docker containers
       shell: docker compose up --build -d
       args:
         chdir: "{{ app_directory }}/project"
       register: docker_start_result
+      become: yes
       
     - name: Fix ownership after Docker compose
       file:
