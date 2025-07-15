@@ -39,10 +39,11 @@ GitHub Actions was used to deploy to the lightsail instance and Ansible was setu
 - Now, for a fresh instance with no nginx - I wrote a [app.conf](https://github.com/SirJosh-i/NodeJs-CRUD-App-Deploy-Via-Ansible/blob/master/app.conf) file then, as shown in the playbook; copied it to nginx directory after the installation of nginx.
 
 ### Preview
-When configuration and deployment is completed, check out your domain and you'll be able to see this message. 
+When configuration and deployment is completed;
+**Check out your domain and you'll be able to see this message**: 
 ![Display Domain](https://github.com/SirJosh-i/RESTAPI-CRUD-Automation-Using-Ansible/blob/master/images/domain-display-msg.png)
 
-To POST data into your database table, Use CURL:
+**To POST data into your database table, Use CURL**:
 ```
 curl -X POST http://app.joshisiris.com.np/u^Crs \
   -H "Content-Type: application/json" \
@@ -53,7 +54,8 @@ curl -X POST http://app.joshisiris.com.np/u^Crs \
 ```
 You can use this command from anywhere, for example:
 ![curl](https://github.com/SirJosh-i/RESTAPI-CRUD-Automation-Using-Ansible/blob/master/images/curl-wsl.png)
-When you go to yourdomain.com/users then, you will be able to get this:
+
+When you go to *yourdomain.com/users* then:
 ![Users](https://github.com/SirJosh-i/RESTAPI-CRUD-Automation-Using-Ansible/blob/master/images/domain-display-users.png)
 
 ### If...then:
