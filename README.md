@@ -3,6 +3,7 @@
 
 ### Overview:
 CRUD API was crafted using NodeJs and Postgres. All necessary files are held inside [app](https://github.com/SirJosh-i/NodeJs-CRUD-App-Deploy-Via-Ansible/tree/master/app).
+
 To start on your instance - Create an AWS Lightsail instance, copy the necessary values and insert it in your GitHub Repo Secrets. Now, to view it on a selective domain; Edit nginx.conf: **server_name** and update **DNS Record** of your domain_name. Finally, trigger the GitHub actions and Voilà! Your domain will be up and running in no time.
 
 ### Pre-requisites:
